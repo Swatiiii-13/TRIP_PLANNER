@@ -1,10 +1,11 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import TripForm from '../components/TripForm';
 import ItineraryDisplay from '../components/ItineraryDisplay';
 import TravelHistory from '../components/TravelHistory';
 import TravelAgentChat from '../components/TravelAgentChat';
+import BudgetDashboard from '../components/BudgetDashboard';
 import api from '../services/api';
 
 const Dashboard = () => {
@@ -14,6 +15,17 @@ const Dashboard = () => {
   const [tripRequestData, setTripRequestData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('plan');
+
+  useEffect(() => {
+    const savedItinerary = sessionStorage.getItem('currentItinerary');
+    const savedRequest = sessionStorage.getItem('currentTripRequest');
+    if (savedItinerary && savedRequest) {
+      setItineraryData(JSON.parse(savedItinerary));
+      setTripRequestData(JSON.parse(savedRequest));
+    }
+  }, []);
+  
+
 
   const handleLogout = () => {
     logout();
@@ -27,6 +39,8 @@ const Dashboard = () => {
     try {
       const response = await api.post('/trips/generate', formData);
       setItineraryData(response.data);
+      sessionStorage.setItem('currentItinerary', JSON.stringify(response.data));
+      sessionStorage.setItem('currentTripRequest', JSON.stringify(formData));
     } catch (error) {
       console.error('Error generating itinerary', error);
       alert('Failed to generate itinerary. Check your API key or inputs.');
@@ -90,7 +104,10 @@ const Dashboard = () => {
             )}
 
             {!loading && itineraryData && (
-              <ItineraryDisplay data={itineraryData} requestData={tripRequestData} />
+              <>
+                <BudgetDashboard itineraryData={itineraryData} tripRequestData={tripRequestData} />
+                <ItineraryDisplay data={itineraryData} requestData={tripRequestData} />
+              </>
             )}
           </main>
         </div>

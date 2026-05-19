@@ -1,3 +1,6 @@
+const { searchFlights } = require('../services/amadeusService');
+const { searchTrains } = require('../services/railwayService');
+
 const getTransportOptions = (req, res) => {
   const { destination } = req.params;
 
@@ -32,6 +35,36 @@ const getTransportOptions = (req, res) => {
   res.status(200).json(transportOptions);
 };
 
+const searchFlightOptions = async (req, res) => {
+  try {
+    const { origin, destination, departureDate, adults } = req.query;
+    if (!origin || !destination || !departureDate) {
+      return res.status(400).json({ message: 'Missing required query parameters' });
+    }
+    const flights = await searchFlights(origin, destination, departureDate, adults);
+    res.status(200).json(flights);
+  } catch (error) {
+    console.error('Flight search error in controller:', error);
+    res.status(500).json({ message: 'Failed to search flights' });
+  }
+};
+
+const searchTrainOptions = async (req, res) => {
+  try {
+    const { fromStation, toStation, date } = req.query;
+    if (!fromStation || !toStation || !date) {
+      return res.status(400).json({ message: 'Missing required query parameters' });
+    }
+    const trains = await searchTrains(fromStation, toStation, date);
+    res.status(200).json(trains);
+  } catch (error) {
+    console.error('Train search error in controller:', error);
+    res.status(500).json({ message: 'Failed to search trains' });
+  }
+};
+
 module.exports = {
-  getTransportOptions
+  getTransportOptions,
+  searchFlightOptions,
+  searchTrainOptions
 };

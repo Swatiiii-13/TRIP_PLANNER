@@ -28,6 +28,8 @@ The repository is split into two main directories:
 - **AI Integration:** `@google/generative-ai` (Gemini 2.5 Flash model).
 - **Environment Management:** `dotenv`.
 - **Middleware:** `cors`, `express.json()`.
+- **Mapping & Location:** `leaflet`, `react-leaflet`, and Nominatim OpenStreetMap API (Frontend).
+- **Image Sourcing:** Unsplash API for dynamic contextual imagery.
 
 ---
 
@@ -67,9 +69,10 @@ The frontend is a single-page application (SPA) where protected routes are guard
 - `/checkout`: Protected view for finalizing bookings.
 
 ### Key Components:
-- **`TripForm.jsx`**: A form component where the user inputs their travel criteria (destination, budget, duration, travelers, preferences). This triggers the backend AI generation.
-- **`ItineraryDisplay.jsx`**: Renders the highly structured JSON itinerary returned by the Gemini AI. Displays day-by-day schedules (morning, afternoon, evening) and cost estimates.
-- **`HotelCard.jsx` & `TransportOptions.jsx`**: Renders AI-recommended accommodations and transport methods.
+- **`TripForm.jsx`**: A form component where the user inputs their travel criteria (origin city, destination, budget, duration, travelers, trip type, preferences). This triggers the backend AI generation.
+- **`ItineraryDisplay.jsx`**: Renders the highly structured JSON itinerary returned by the Gemini AI. Displays day-by-day schedules and dynamic Unsplash imagery. Includes interactive 'View on Map' buttons for every activity.
+- **`HotelCard.jsx` & `TransportOptions.jsx`**: Renders AI-recommended accommodations and transport methods. Hotel cards also feature dynamic Unsplash images and direct mapping capabilities.
+- **`MapModal.jsx`**: A reusable popup component utilizing Leaflet and Nominatim to geocode locations on the fly and plot them on an interactive map with direct links to Google Maps routing.
 - **`TravelAgentChat.jsx`**: A conversational interface allowing users to chat with the AI for ad-hoc travel advice or itinerary modifications.
 - **`TravelHistory.jsx`**: Fetches and displays past trips the user has saved to the database.
 

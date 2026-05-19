@@ -7,10 +7,10 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const generateItinerary = async (req, res) => {
   try {
-    const { destination, duration, travelers, budget, preferences } = req.body;
+    const { destination, duration, travelers, budget, preferences, originCity, tripType } = req.body;
 
     // Validate inputs
-    if (!destination || !duration || !travelers || !budget) {
+    if (!destination || !duration || !travelers || !budget || !originCity || !tripType) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
 
@@ -32,6 +32,12 @@ Generate a detailed travel itinerary for the following trip:
 - Budget: ${budget}
 - Preferences: ${preferences && Array.isArray(preferences) ? preferences.join(', ') : 'None'}
 
+The traveller is coming from ${originCity}. This is a ${tripType} trip. Generate the itinerary accordingly with activities, hotels, and transport matching this travel style.
+
+CRITICAL INSTRUCTION: ALL prices, estimated costs, and budgets MUST be in Indian Rupees (INR). Keep the prices realistic for the Indian travel market (e.g., Daily Food: ₹500 - ₹2000, Activities: ₹300 - ₹3000). Use the ₹ symbol where text is expected, and raw integers where numbers are expected.
+
+Add to each morning/afternoon/evening activity object an "imageKeyword" field which contains just the specific place or attraction name to be used for image searches (e.g., "Nandi Hills trek sunrise" or "Cubbon Park Bangalore" or "Savandurga monolith trek").
+
 You MUST respond strictly with a valid JSON object matching this exact structure:
 
 {
@@ -41,19 +47,32 @@ You MUST respond strictly with a valid JSON object matching this exact structure
     "estimatedCost": "",
     "generalSafetyTip": ""
   },
+  "budgetBreakdown": {
+    "totalCost": 0,
+    "stayCost": 0,
+    "transportCost": 0,
+    "foodCost": 0,
+    "activitiesCost": 0,
+    "dailyExpenses": [
+      {
+        "day": 1,
+        "cost": 0
+      }
+    ]
+  },
   "itinerary": [
     {
       "day": 1,
       "theme": "",
-      "morning": { "activity": "", "costEstimate": 0 },
-      "afternoon": { "activity": "", "costEstimate": 0 },
-      "evening": { "activity": "", "costEstimate": 0 },
+      "morning": { "activity": "", "imageKeyword": "", "costEstimate": 0 },
+      "afternoon": { "activity": "", "imageKeyword": "", "costEstimate": 0 },
+      "evening": { "activity": "", "imageKeyword": "", "costEstimate": 0 },
       "localFoodSuggestion": ""
     }
   ]
 }
 
-Ensure that the itinerary array has exactly ${duration} items (one for each day).
+Ensure that the itinerary array has exactly ${duration} items (one for each day) and dailyExpenses array has exactly ${duration} items.
 `;
 
     // Await AI response

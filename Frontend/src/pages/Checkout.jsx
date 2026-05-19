@@ -7,7 +7,6 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
 
   // Fallback state if navigated directly without state
   const itemState = location.state || {
@@ -21,32 +20,9 @@ const Checkout = () => {
     setIsProcessing(true);
     setTimeout(() => {
       setIsProcessing(false);
-      setIsSuccess(true);
+      navigate('/dashboard', { replace: true });
     }, 2000);
   };
-
-  if (isSuccess) {
-    return (
-      <div className="checkout-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
-        <div className="glass-container" style={{ textAlign: 'center', padding: '3rem', maxWidth: '500px' }}>
-          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🎉</div>
-          <h2 style={{ marginBottom: '1rem' }}>Payment Successful!</h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-            Your booking with {itemState.provider} is confirmed.
-          </p>
-          <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '8px', marginBottom: '2rem' }}>
-            <strong>Booking Reference ID:</strong> <br />
-            <span style={{ fontFamily: 'monospace', fontSize: '1.2rem', letterSpacing: '2px', color: 'var(--primary-color)' }}>
-              {Math.random().toString(36).substring(2, 10).toUpperCase()}
-            </span>
-          </div>
-          <button onClick={() => navigate('/dashboard')} className="glass-button" style={{ width: '100%', background: 'var(--primary-color)' }}>
-            Return to Dashboard
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="checkout-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', maxWidth: '1000px', margin: '2rem auto', minHeight: '70vh', padding: '0 1rem' }}>

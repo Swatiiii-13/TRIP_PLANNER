@@ -17,7 +17,7 @@ Context about the user's current trip or destination: ${context || 'General trav
 
 User message: ${message}
 
-Provide a concise, helpful, and friendly response.
+Provide a concise, helpful, and friendly response. If mentioning any prices, budgets, or costs, strictly use Indian Rupees (INR) and the ₹ symbol with realistic Indian market estimates.
 `;
 
     const result = await model.generateContent(prompt);
